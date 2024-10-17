@@ -1,35 +1,22 @@
 
-DROP DATABASE Factory;
-
-CREATE DATABASE IF NOT EXISTS Factory;
-
-
+SET @@AUTOCOMMIT = 1;
 USE Factory;
 
-DROP TABLE IF EXISTS Staff;
-CREATE TABLE Staff(
-    id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-   user_name varchar(20),
-   password varchar(4),
-   role varchar(20),
-   access_level varchar(1)
-)
- AUTO_INCREMENT = 1;
+SET FOREIGN_KEY_CHECKS = 0;
 
+DROP TABLE IF EXISTS MachineStatus;
+CREATE TABLE MachineStatus(
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  status_name VARCHAR(20) NOT NULL
+) AUTO_INCREMENT = 1;
+CREATE USER IF NOT EXISTS dbadmin@localhost;
+GRANT ALL PRIVILEGES ON Factory.MachineStatus TO dbadmin@localhost;
 
-INSERT INTO Staff(user_name,password,role,access_level) VALUES('Visitor','4321','auditor','4');
-INSERT INTO Staff(user_name,password,role,access_level) VALUES('Xi','4321','administrator (CEO)','1');
-INSERT INTO Staff(user_name,password,role,access_level) VALUES('Tony','4321','manager','2');
-INSERT INTO Staff(user_name,password,role,access_level) VALUES('Elke','4321','manager','2');
-INSERT INTO Staff(user_name,password,role,access_level) VALUES('Timmy','4321','operator','3');
-INSERT INTO Staff(user_name,password,role,access_level) VALUES('Tammy','4321','operator','3');
-INSERT INTO Staff(user_name,password,role,access_level) VALUES('Sally','4321','operator','3');
-INSERT INTO Staff(user_name,password,role,access_level) VALUES('Tomi','4321','operator','3');
-INSERT INTO Staff(user_name,password,role,access_level) VALUES('Janusz','4321','operator','3');
-INSERT INTO Staff(user_name,password,role,access_level) VALUES('Remo','4321','operator','3');
+INSERT INTO MachineStatus(status_name)
+VALUES ('in-use'), ('retired');
+
 
 DROP TABLE IF EXISTS Messages;
-
 CREATE TABLE IF NOT EXISTS Messages (
     message_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     sender_id INT NOT NULL,
@@ -40,17 +27,12 @@ CREATE TABLE IF NOT EXISTS Messages (
     FOREIGN KEY (receiver_id) REFERENCES Staff(id)
 );
 
+CREATE USER IF NOT EXISTS dbadmin@localhost;
+GRANT ALL PRIVILEGES ON Factory.Messages TO dbadmin@localhost;
 
 
-DROP TABLE IF EXISTS Machines;
-DROP TABLE IF EXISTS MachineStatus;
-
-CREATE TABLE MachineStatus(
-  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  status_name VARCHAR(20) NOT NULL
-) AUTO_INCREMENT = 1;
-
-CREATE TABLE Machines(
+DROP TABLE IF EXISTS Mashines;
+CREATE TABLE Mashines(
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   machine_name VARCHAR(40) NOT NULL,
   machine_status_id INT NOT NULL,
@@ -58,25 +40,10 @@ CREATE TABLE Machines(
   FOREIGN KEY (machine_status_id) REFERENCES MachineStatus(id)
 ) AUTO_INCREMENT = 1;
 
-DROP TABLE IF EXISTS MachineAssign;
-CREATE TABLE MachineAssign(
-  assign_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  machine_id INT NOT NULL,
-  staff_id INT NOT NULL,
-  assign_date DATETIME NOT NULL,
-  release_date DATETIME,
-  timer_1 INT,
-  timer_2 INT,
-  counter_1 INT,
-  speed  INT,
-  FOREIGN KEY (machine_id) REFERENCES Machines(id),
-  FOREIGN KEY (staff_id) REFERENCES Staff(id)
-) AUTO_INCREMENT = 1;
+CREATE USER IF NOT EXISTS dbadmin@localhost;
+GRANT ALL PRIVILEGES ON Factory.Mashines TO dbadmin@localhost;
 
-INSERT INTO MachineStatus(status_name) 
-VALUES ('in-use'), ('retired');
-
-INSERT INTO Machines(machine_name, machine_status_id) 
+INSERT INTO Mashines(machine_name, machine_status_id)
 VALUES ('CNC Machine 1', 1),
        ('CNC Machine 1A', 1),
        ('CNC Machine 2', 1),
@@ -92,6 +59,23 @@ VALUES ('CNC Machine 1', 1),
        ('CNC Machine 4D 6', 1),
        ('Small Parts Wash', 2),
        ('3D Printer', 1);
+
+DROP TABLE IF EXISTS MachineAssign;
+CREATE TABLE MachineAssign(
+  assign_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  machine_id INT NOT NULL,
+  staff_id INT NOT NULL,
+  assign_date DATETIME NOT NULL,
+  release_date DATETIME,
+  timer_1 INT,
+  timer_2 INT,
+  counter_1 INT,
+  speed  INT,
+  FOREIGN KEY (machine_id) REFERENCES Mashines(id),
+  FOREIGN KEY (staff_id) REFERENCES Staff(id)
+) AUTO_INCREMENT = 1;
+CREATE USER IF NOT EXISTS dbadmin@localhost;
+GRANT ALL PRIVILEGES ON Factory.MachineAssign TO dbadmin@localhost;
 
 INSERT INTO MachineAssign(machine_id, staff_id, assign_date, release_date, timer_1, timer_2, counter_1, speed) 
 VALUES 
@@ -207,4 +191,5 @@ VALUES
 (8, 9, '2023-09-15 08:00:00', NULL, 1, 2, 3, 4),
 (9, 9, '2023-09-15 08:00:00', NULL, 1, 2, 3, 4);
 
+SET FOREIGN_KEY_CHECKS = 1;
 

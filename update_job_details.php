@@ -28,7 +28,7 @@ try {
             ma.counter_1, 
             ma.speed 
         FROM 
-            Machines m
+            Mashines	 m
         JOIN 
             MachineAssign ma ON m.id = ma.machine_id
         JOIN 

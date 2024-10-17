@@ -25,7 +25,7 @@ try {
             ma.assign_date,
             ma.release_date
         FROM 
-            Machines m
+            Mashines m
         JOIN 
             MachineAssign ma ON m.id = ma.machine_id
         JOIN 
